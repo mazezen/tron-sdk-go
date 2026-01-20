@@ -1,0 +1,24 @@
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+tronctl
+tronctl-docs
+bin/
+# scripts
+scripts/*
+# keys
+*.pem
+*.key
+# Go test binary, build with `go test -c`
+*.out
+# dotenv environment variable files
+.env
+.env.test
+# Mac system files
+.DS_Store
+# VS Code settings
+.vscode/
+# JetBrains IDEs
+.idea/

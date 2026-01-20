@@ -1,0 +1,31 @@
+syntax = "proto3";
+package protocol;
+option go_package = "github.com/mazezen/tron-sdk-go/pb/tronpb";
+
+import "Tron.proto";
+
+
+service TronZksnark {
+  rpc CheckZksnarkProof (ZksnarkRequest) returns (ZksnarkResponse) {
+  }
+};
+
+message ZksnarkRequest {
+  Transaction transaction = 1;
+  bytes sighash = 2;
+  int64 valueBalance = 3;
+  string txId = 4;
+}
+
+message ZksnarkResponse {
+  enum Code {
+    SUCCESS = 0;
+    FAILED = 1;
+  }
+
+  Code code = 1;
+}
+
+
+
+

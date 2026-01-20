@@ -1,0 +1,4 @@
+syntax = "proto3";
+
+package protocol;
+option go_package = "github.com/mazezen/tron-sdk-go/pb/tronpb";

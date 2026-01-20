@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package protocol;
+option go_package = "github.com/mazezen/tron-sdk-go/pb/tronpb";
+
+
+enum ResourceCode {
+  BANDWIDTH = 0x00;
+  ENERGY = 0x01;
+  TRON_POWER = 0x02;
+}
