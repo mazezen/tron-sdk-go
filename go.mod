@@ -39,6 +39,7 @@ require (
 	github.com/jessevdk/go-flags v1.6.1 // indirect
 	github.com/jrick/logrotate v1.1.2 // indirect
 	github.com/kkdai/bstream v1.0.0 // indirect
+	github.com/mazezen/go-bip39 v0.0.0-20260121114723-ebba1d6da3a5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/shengdoushi/base58 v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect
