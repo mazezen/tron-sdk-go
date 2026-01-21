@@ -1,6 +1,9 @@
 package common
 
-import "encoding/hex"
+import (
+	"encoding/hex"
+	"strings"
+)
 
 type hexError struct {
 	msg string
@@ -13,10 +16,9 @@ func (e *hexError) Error() string {
 }
 
 func FromHex(s string) ([]byte, error) {
-	if Hash0xPrefix(s) {
+	if Has0xPrefix(s) {
 		s = s[2:]
 	}
-
 	// Hexadecimal strings must be of even length to be decoded correctly into bytes
 	// as every two hexadecimal characters correspond to one byte (8 bits)
 	// Adding a leading 0 does not change the value itself (0x0a=0xa=10)
@@ -28,10 +30,35 @@ func FromHex(s string) ([]byte, error) {
 	return Hex2Bytes(s)
 }
 
-func Hash0xPrefix(s string) bool {
+func Has0xPrefix(s string) bool {
 	return len(s) >= 2 && s[0] == '0' && (s[1] == 'x' || s[1] == 'X')
+}
+func Has41Prefix(s string) bool {
+	return len(s) >= 2 && s[0] == '4' && s[1] == '1'
+}
+
+func HasTPrefix(s string) bool {
+	return len(s) == 34 && s[0] == 'T'
 }
 
 func Hex2Bytes(s string) ([]byte, error) {
 	return hex.DecodeString(s)
+}
+
+func TronHexToByte(s string) ([]byte, error) { return hex.DecodeString(s) }
+
+func EthHexToByte(s string) ([]byte, error) {
+	return hex.DecodeString(strings.Replace(s, "0x", "41", -1))
+}
+
+func BytesToHexString(bytes []byte) string {
+	encode := make([]byte, len(bytes)*2)
+	hex.Encode(encode, bytes)
+	return string(encode)
+}
+
+func BytesToEthHexString(bytes []byte) string {
+	encode := make([]byte, len(bytes)*2)
+	hex.Encode(encode, bytes)
+	return "0x" + string(encode[2:])
 }

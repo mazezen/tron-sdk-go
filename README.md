@@ -24,5 +24,7 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ### Block
 |   GetNowBlock   |   GetNowBlock2   |   GetBlockByNum   |   GetBlockByNum2   |   GetTransactionCountByBlockNum   |
 | ---- | ---- | ---- | ---- | ---- |
-|   GetBlockById   |   GetBlockByLimitNext   |   GetBlockByLimitNext2   |   GetBlockByLatestNum   |   GetBlockByLatestNum2   |
+|   GetTransactionCountByBlockNum   |   GetBlockByLimitNext   |   GetBlockByLimitNext2   |   GetBlockByLatestNum   |   GetBlockByLatestNum2   |
+|   GetAccount   |   SetAccountId   |   GetAccountById   |   BroadcastTransaction   |   SignTransaction   |
+|   SignTransactionECDSA   |      |      |      |      |
 
