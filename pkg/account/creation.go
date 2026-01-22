@@ -3,6 +3,10 @@ package account
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/mazezen/tron-sdk-go/pkg/keys"
+	"github.com/mazezen/tron-sdk-go/pkg/mnemonic"
+	"github.com/mazezen/tron-sdk-go/pkg/store"
 )
 
 // Creation struct for account
@@ -37,7 +41,20 @@ func CheckPassphraseStrong(passphrase string) error {
 }
 
 // CreateNewLocalAccount create a new local account
-func CreateNewLocalAccount() error {
+func CreateNewLocalAccount(candidate *Creation) error {
+	if err := CheckPassphraseStrong(candidate.Passphrase); err != nil {
+		return err
+	}
+	ks := store.FromAccountName(candidate.Name)
 
+	if candidate.Mnemonic == "" {
+		candidate.Mnemonic = mnemonic.Generate24()
+	}
+	// Hardcoded index of 0 for brandnew account.
+	private, _ := keys.FromMnemonicSeedAndPassphrase(candidate.Mnemonic, candidate.MnemonicPassphrase, 0)
+	_, err := ks.ImportECDSA(private.ToECDSA(), candidate.Passphrase)
+	if err != nil {
+		return err
+	}
 	return nil
 }
