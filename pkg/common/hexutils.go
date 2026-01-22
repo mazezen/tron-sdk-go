@@ -45,6 +45,14 @@ func Hex2Bytes(s string) ([]byte, error) {
 	return hex.DecodeString(s)
 }
 
+// HexStringToBytes hex string as bytes
+func HexStringToBytes(input string) ([]byte, error) {
+	if len(input) == 0 {
+		return nil, EmptyString
+	}
+	return hex.DecodeString(strings.Replace(input, "0x", "", -1))
+}
+
 func TronHexToByte(s string) ([]byte, error) { return hex.DecodeString(s) }
 
 func EthHexToByte(s string) ([]byte, error) {
