@@ -1,0 +1,26 @@
+package common
+
+import (
+	"bytes"
+	"encoding/json"
+)
+
+func JSONPrettyFormat(in string) string {
+	var out bytes.Buffer
+	if err := json.Indent(&out, []byte(in), "", "  "); err != nil {
+		return in
+	}
+	return out.String()
+}
+
+// ToJSONUnsafe returns "{}" on failure case
+func ToJSONUnsafe(payload interface{}, pretty bool) string {
+	b, err := json.Marshal(payload)
+	if err != nil {
+		return "{}"
+	}
+	if pretty {
+		return JSONPrettyFormat(string(b))
+	}
+	return string(b)
+}
