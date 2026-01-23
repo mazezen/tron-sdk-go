@@ -6,9 +6,12 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.6
 	github.com/deckarep/golang-set v1.8.0
 	github.com/ethereum/go-ethereum v1.16.8
-	github.com/go-playground/assert v1.2.1
 	github.com/golang/protobuf v1.5.4
 	github.com/mazezen/go-bip39 v0.0.0-20260121114723-ebba1d6da3a5
+	github.com/mitchellh/go-homedir v1.1.0
+	github.com/pborman/uuid v1.2.1
+	github.com/pkg/errors v0.9.1
+	github.com/rjeczalik/notify v0.9.3
 	github.com/shengdoushi/base58 v1.0.0
 	github.com/stretchr/testify v1.11.1
 	go.uber.org/zap v1.27.1
@@ -24,10 +27,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
-	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rjeczalik/notify v0.9.3 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
