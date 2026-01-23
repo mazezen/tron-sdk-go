@@ -53,7 +53,7 @@ func HexStringToBytes(input string) ([]byte, error) {
 	return hex.DecodeString(strings.Replace(input, "0x", "", -1))
 }
 
-func TronHexToByte(s string) ([]byte, error) { return hex.DecodeString(s) }
+func HexToByte(s string) ([]byte, error) { return hex.DecodeString(s) }
 
 func EthHexToByte(s string) ([]byte, error) {
 	return hex.DecodeString(strings.Replace(s, "0x", "41", -1))

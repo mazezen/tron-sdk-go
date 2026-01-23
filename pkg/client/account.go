@@ -74,7 +74,7 @@ func (c *GrpcClient) GetAccountBalance(addr, hash string, number int64) (*tronpb
 		return nil, fmt.Errorf("invalid addrress: %w", err)
 	}
 
-	hexToByte, err := common.TronHexToByte(hash)
+	hexToByte, err := common.HexToByte(hash)
 	if err != nil {
 		return nil, fmt.Errorf("invalid hash: %w", err)
 	}
@@ -160,7 +160,7 @@ func (c *GrpcClient) convert(addr string) (address.Address, error) {
 		if common.Has0xPrefix(addr) {
 			return common.EthHexToByte(addr)
 		} else if common.Has41Prefix(addr) {
-			return common.TronHexToByte(addr)
+			return common.HexToByte(addr)
 		}
 	}
 
