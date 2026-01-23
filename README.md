@@ -49,7 +49,7 @@ import (
 	"github.com/mazezen/tron-sdk-go/pkg/wallet"
 )
 
-// 示例：main 函数 或 CLI 命令实现
+// 示例：main 函数
 func main() {
 	keystoreDir := keys.CheckAndMakeKeyDirIfNeeded()
 
@@ -95,5 +95,6 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 | ---- | ---- |---------------------|----------------------| ---- |
 |   GetTransactionCountByBlockNum   |   GetBlockByLimitNext   | GetBlockByLimitNext2 | GetBlockByLatestNum  |   GetBlockByLatestNum2   |
 |   GetAccount   |   SetAccountId   | GetAccountById      | BroadcastTransaction |   SignTransaction   |
-|   SignTransactionECDSA   |   Generate12   |      Generate24     | CreateWallet         |      |
+|   SignTransactionECDSA   |   Generate12   |      Generate24     | CreateWallet         |   GetAccountBalance   |
+|   UpdateAccount   |   UpdateAccount2   |      CreateTransaction     | CreateTransaction2         |      |
 

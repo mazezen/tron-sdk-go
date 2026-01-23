@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/mazezen/tron-sdk-go/pkg/address"
+	"github.com/mazezen/tron-sdk-go/pkg/common"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -143,6 +145,103 @@ func TestGrpcClient_GetAccountById(t *testing.T) {
 			assert.NotNil(t, acc, "Account should not be nil")
 
 			t.Logf("[]%s Account id is: %v", tt.name, acc)
+		})
+	}
+}
+
+func TestGrpcClient_GetAccountBalance(t *testing.T) {
+	toAddress, _ := address.Base58ToAddress("TCypds3XB6zjo6dpyLLKd6rkz4btrEfkob")
+	t.Logf("tron address is: %v", toAddress.TronHex())
+	t.Logf("eth address is: %v", toAddress.EthHex())
+
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	client.SetTimeout(20 * time.Second)
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "should not return error")
+	defer client.Stop()
+
+	tests := []struct {
+		name   string
+		addr   string
+		hash   string
+		number int64
+	}{
+		{
+			name:   "get account balance - base58",
+			addr:   "TCypds3XB6zjo6dpyLLKd6rkz4btrEfkob",
+			hash:   "0000000004bd01cdce66bc05738cb77155afaaa6846502c621c4e52cb5d2e84e",
+			number: 79495629,
+		},
+		{
+			name:   "get account balance - tron hex",
+			addr:   "4121061fa3592c73c4c1692afc3e2e8ae81ae94911",
+			hash:   "0000000004bd01cdce66bc05738cb77155afaaa6846502c621c4e52cb5d2e84e",
+			number: 79495629,
+		},
+		{
+			name:   "get account balance - eth hex",
+			addr:   "0x21061fa3592c73c4c1692afc3e2e8ae81ae94911",
+			hash:   "0000000004bd01cdce66bc05738cb77155afaaa6846502c621c4e52cb5d2e84e",
+			number: 79495629,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			balance, err := client.GetAccountBalance(tt.addr, tt.hash, tt.number)
+			assert.NoError(t, err, "GetAccountBalance should not return error")
+			assert.NotNil(t, balance, "GetAccountBalance should not be nil")
+
+			t.Logf("[]%s GetAccountBalance result is: %d", tt.name, balance.GetBalance())
+		})
+	}
+}
+
+func TestGrpcClient_UpdateAccount2(t *testing.T) {
+	toAddress, _ := address.Base58ToAddress("TXeEFbJpGM6zgWFgcUD1Prar2hK3iAuvN4")
+	t.Logf("tron address is: %v", toAddress.TronHex())
+	t.Logf("eth address is: %v", toAddress.EthHex())
+
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "should not return error")
+	defer client.Stop()
+
+	tests := []struct {
+		name        string
+		addr        string
+		accountName string
+	}{
+		{
+			name:        "update account name - base58",
+			addr:        "TXeEFbJpGM6zgWFgcUD1Prar2hK3iAuvN4",
+			accountName: "TXeEFbJpGM6zgWFgcUD1",
+		},
+		{
+			name:        "update account name - tron hex",
+			addr:        "41edbbe86be140fd81327ddec7eb9d16f615fbee66",
+			accountName: "TXeEFbJpGM6zgWFgcUD2",
+		},
+		{
+			name:        "update account name - eth hex",
+			addr:        "0xedbbe86be140fd81327ddec7eb9d16f615fbee66",
+			accountName: "TXeEFbJpGM6zgWFgcUD3",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transaction, err := client.UpdateAccount2(tt.addr, tt.accountName)
+			assert.NoError(t, err, "UpdateAccount2 should not return error")
+			assert.NotNil(t, transaction, "UpdateAccount2 should not be nil")
+
+			t.Logf("[]%s UpdateAccount2 result is: %v", tt.name, transaction.GetResult())
+			t.Logf("[]%s UpdateAccount2 tx is :%s", tt.name, common.BytesToHexString(transaction.GetTxid()))
 		})
 	}
 }
