@@ -96,4 +96,6 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 |   GetAccount   |   SetAccountId   | GetAccountById      | BroadcastTransaction |   SignTransaction   |
 |   SignTransactionECDSA   |   Generate12   |      Generate24     | CreateWallet         |   GetAccountBalance   |
 |   UpdateAccount   |   UpdateAccount2   |      CreateTransaction     | CreateTransaction2         |   ListWitnesses   |
-|   VoteWitnessAccount   |   VoteWitnessAccount2   |           |          |      |
+|   VoteWitnessAccount   |   VoteWitnessAccount2   |     GetDelegatedResourceAccountIndex      |     GetDelegatedResourceAccountIndexV2     |   GetDelegatedResource   |
+|   GetDelegatedResourceV2   |   GetDelegatedResourceByGivenTo   |      GetDelegatedResourceV2ByGivenTo     | GetCanDelegatedMaxSize         |   DelegateResource   |
+|   UnDelegateResource   |      |           |          |      |

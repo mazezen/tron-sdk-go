@@ -33,8 +33,8 @@ func (a Address) Bytes() []byte {
 	return a[:]
 }
 
-// TronHex get bytes from address in string
-func (a Address) TronHex() string {
+// Hex get bytes from address in string
+func (a Address) Hex() string {
 	return common.BytesToHexString(a[:])
 }
 
@@ -69,7 +69,7 @@ func HexToBase58Address(hex string) string {
 	if common.Has0xPrefix(hex) {
 		hex = strings.Replace(hex, "0x", "41", -1)
 	}
-	
+
 	return HexToAddress(hex).String()
 }
 

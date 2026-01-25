@@ -151,7 +151,7 @@ func TestGrpcClient_GetAccountById(t *testing.T) {
 
 func TestGrpcClient_GetAccountBalance(t *testing.T) {
 	toAddress, _ := address.Base58ToAddress("TCypds3XB6zjo6dpyLLKd6rkz4btrEfkob")
-	t.Logf("tron address is: %v", toAddress.TronHex())
+	t.Logf("tron address is: %v", toAddress.Hex())
 	t.Logf("eth address is: %v", toAddress.EthHex())
 
 	dialOptions := []grpc.DialOption{
@@ -202,7 +202,7 @@ func TestGrpcClient_GetAccountBalance(t *testing.T) {
 
 func TestGrpcClient_UpdateAccount2(t *testing.T) {
 	toAddress, _ := address.Base58ToAddress("TXeEFbJpGM6zgWFgcUD1Prar2hK3iAuvN4")
-	t.Logf("tron address is: %v", toAddress.TronHex())
+	t.Logf("tron address is: %v", toAddress.Hex())
 	t.Logf("eth address is: %v", toAddress.EthHex())
 
 	dialOptions := []grpc.DialOption{

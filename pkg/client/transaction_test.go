@@ -16,13 +16,13 @@ func TestGrpcClient_CreateTransaction2(t *testing.T) {
 	from, err := address.Base58ToAddress("TXeEFbJpGM6zgWFgcUD1Prar2hK3iAuvN4")
 	assert.NoError(t, err, "base58 address convert to Address should not error")
 	assert.NotNil(t, from, "address should not be nil")
-	t.Logf("from tron hex: %s", from.TronHex())
+	t.Logf("from tron hex: %s", from.Hex())
 	t.Logf("from eth hex: %s", from.EthHex())
 
 	to, err := address.Base58ToAddress("TNngs5j7HG54C8DjzgGRuLFtHnooCjGukw")
 	assert.NoError(t, err, "base58 address convert to Address should not error")
 	assert.NotNil(t, to, "address should not be nil")
-	t.Logf("to tron hex: %s", to.TronHex())
+	t.Logf("to tron hex: %s", to.Hex())
 	t.Logf("to eth hex: %s", to.EthHex())
 
 	dialOptions := []grpc.DialOption{

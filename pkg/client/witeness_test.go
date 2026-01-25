@@ -15,7 +15,7 @@ func TestGrpcClient_VoteWitnessAccount2(t *testing.T) {
 	from, err := address.Base58ToAddress("TXeEFbJpGM6zgWFgcUD1Prar2hK3iAuvN4")
 	assert.NoError(t, err, "base58 address convert to Address should not error")
 	assert.NotNil(t, from, "address should not be nil")
-	t.Logf("from tron hex: %s", from.TronHex())
+	t.Logf("from tron hex: %s", from.Hex())
 	t.Logf("from eth hex: %s", from.EthHex())
 
 	dialOptions := []grpc.DialOption{

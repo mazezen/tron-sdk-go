@@ -17,7 +17,7 @@ func TestAddress_Scan(t *testing.T) {
 	assert.Equal(t, "TDT71s4KF5fdg4799CVrTPZbhXz2StwpVb", b58)
 	t.Logf("address: %s", b58)
 
-	tronHex := validAddress.TronHex()
+	tronHex := validAddress.Hex()
 	assert.Equal(t, "41262f06fe4a90740371d99fc6cf448fbb097438aa", tronHex)
 	t.Logf("tronHex: %s", tronHex)
 
