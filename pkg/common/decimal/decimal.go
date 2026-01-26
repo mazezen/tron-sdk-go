@@ -3,7 +3,7 @@ package decimal
 import "math/big"
 
 // Copyright from gotron-sdk
-// https://github.com/fbsobreira/gotron-sdk/blob/master/pkg/common/decimals/decimals.go
+// https://github.com/fbsobreira/gotron-sdk/blob/master/pkg/common/numeric/numeric.go
 
 func Pow(a *big.Float, e int64) *big.Float {
 	result := Zero().Copy(a)

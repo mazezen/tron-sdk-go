@@ -7,6 +7,22 @@ import (
 	tronpb "github.com/mazezen/tron-sdk-go/pb/tron"
 )
 
+// GetAccountResource Query the resource information of an account (bandwidth, energy, etc).
+func (c *GrpcClient) GetAccountResource(addr string) (*tronpb.AccountResourceMessage, error) {
+	var err error
+	var req = new(tronpb.Account)
+
+	req.Address, err = c.convert(addr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid address: %w", err)
+	}
+
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.GetAccountResource(ctx, req)
+}
+
 // GetDelegatedResourceAccountIndex Query the resource delegation by an account during stake1.0 phase.
 // i.e. list all addresses that have delegated resources to an account
 // value: base58 (T...) | hex (tron hex 41...) | eth hex (0x...)

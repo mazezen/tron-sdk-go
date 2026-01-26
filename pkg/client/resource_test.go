@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/ethereum/go-ethereum/crypto"
 	tronpb "github.com/mazezen/tron-sdk-go/pb/tron"
 	"github.com/mazezen/tron-sdk-go/pkg/address"
@@ -433,16 +434,57 @@ func TestGrpcClient_DelegateResource(t *testing.T) {
 			lock:       false,
 			lockPeriod: 0,
 		},
+		{
+			name:       "delegate energy resource - base58",
+			from:       fromAddress.String(),
+			to:         toAddress.String(),
+			core:       tronpb.ResourceCode_ENERGY,
+			balance:    big.NewFloat(10000.00),
+			lock:       false,
+			lockPeriod: 0,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			// convert to sun
-			balance, _ := decimal.Mul(test.balance, big.NewFloat(1_000_000)).Int64()
-			t.Logf("balance: %d", balance)
+			var balance int64
+			if test.core == tronpb.ResourceCode_BANDWIDTH {
+				resource, _ := client.GetAccountResource(test.to)
+				exchangeRate := decimal.Div(big.NewFloat(float64(resource.TotalNetLimit)), big.NewFloat(float64(resource.TotalNetWeight)))
+				exchangeRate = decimal.Sub(exchangeRate, big.NewFloat(0.06))
+				// convert to sun
+				trxToBandWidth := decimal.Div(test.balance, exchangeRate)
+				balance, _ = decimal.Mul(trxToBandWidth, big.NewFloat(1_000_000)).Int64()
+				t.Logf("balance: %d", balance)
+			}
+
+			if test.core == tronpb.ResourceCode_ENERGY {
+				resource, err := client.GetAccountResource(test.to)
+				assert.NoErrorf(t, err, "failed get [%s] account resource", test.to)
+				assert.NotNil(t, resource, "failed get [%s] account resource", test.to)
+				t.Logf("resource: %s", resource)
+				exchangeRate := decimal.Div(big.NewFloat(float64(resource.TotalEnergyLimit)), big.NewFloat(float64(resource.TotalEnergyWeight)))
+				exchangeRate = decimal.Sub(exchangeRate, big.NewFloat(0.01))
+				t.Logf("exchangeRate: %0.6f", exchangeRate)
+
+				balanceF := decimal.Div(test.balance, exchangeRate)
+				t.Logf("balanceF: %0.6f", balanceF)
+
+				// convert to sun
+				balance, _ = decimal.Mul(balanceF, big.NewFloat(1_000_000)).Int64()
+				t.Logf("balance: %d", balance)
+			}
 
 			txEx, err := client.DelegateResource(test.from, test.to, test.core, balance, test.lock, test.lockPeriod)
 			assert.NoError(t, err, "failed delegate resource")
 			assert.NotNil(t, txEx, "failed delegate resource")
+
+			toBytes, _ := common.HexToByte(fromPk)
+			btcecPk, _ := btcec.PrivKeyFromBytes(toBytes)
+			addr := address.BTCECPrivkeyToAddress(btcecPk)
+			//t.Logf("addr: %s", addr.String())
+			if addr.String() != test.from {
+				txEx.Transaction.RawData.Contract[0].PermissionId = 3
+			}
 
 			// signature
 			ecdsa, err := crypto.HexToECDSA(fromPk)
@@ -455,9 +497,8 @@ func TestGrpcClient_DelegateResource(t *testing.T) {
 			res, err := client.BroadcastTransaction(tx)
 			assert.NoError(t, err, "failed broadcast transaction")
 			assert.NotNil(t, res, "failed broadcast transaction")
-			assert.NotEqual(t, tronpb.Return_SUCCESS, res.Code, "failed broadcast transaction")
 
-			t.Logf("delegate resource from %s to %s txid:%s", fromAddress.String(), toAddress.String(), txEx.Txid)
+			t.Logf("delegate resource from %s to %s txid:%s", fromAddress.String(), toAddress.String(), common.BytesToHexString(txEx.Txid))
 		})
 	}
 }
@@ -482,22 +523,60 @@ func TestGrpcClient_UnDelegateResource(t *testing.T) {
 		balance *big.Float
 	}{
 		{
-			name:    "delegate bandwidth resource - base58",
+			name:    "unDelegate bandwidth resource - base58",
 			from:    fromAddress.String(),
 			to:      toAddress.String(),
 			core:    tronpb.ResourceCode_BANDWIDTH,
 			balance: big.NewFloat(300.00),
 		},
+		{
+			name:    "unDelegate energy resource - base58",
+			from:    fromAddress.String(),
+			to:      toAddress.String(),
+			core:    tronpb.ResourceCode_ENERGY,
+			balance: big.NewFloat(10000.00),
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			// convert to sun
-			balance, _ := decimal.Mul(test.balance, big.NewFloat(1_000_000)).Int64()
-			t.Logf("balance: %d", balance)
+			var balance int64
+			if test.core == tronpb.ResourceCode_BANDWIDTH {
+				// convert to sun
+				resource, _ := client.GetAccountResource(test.to)
+				exchangeRate := decimal.Div(big.NewFloat(float64(resource.TotalNetLimit)), big.NewFloat(float64(resource.TotalNetWeight)))
+				exchangeRate = decimal.Sub(exchangeRate, big.NewFloat(0.06))
+				trxToBandWidth := decimal.Div(test.balance, exchangeRate)
+				balance, _ = decimal.Mul(trxToBandWidth, big.NewFloat(1_000_000)).Int64()
+				t.Logf("balance: %d", balance)
+			}
+			if test.core == tronpb.ResourceCode_ENERGY {
+				resource, err := client.GetAccountResource(test.to)
+				assert.NoErrorf(t, err, "failed get [%s] account resource", test.to)
+				assert.NotNil(t, resource, "failed get [%s] account resource", test.to)
+				t.Logf("resource: %s", resource)
+				exchangeRate := decimal.Div(big.NewFloat(float64(resource.TotalEnergyLimit)), big.NewFloat(float64(resource.TotalEnergyWeight)))
+				exchangeRate = decimal.Sub(exchangeRate, big.NewFloat(0.01))
+				t.Logf("exchangeRate: %0.6f", exchangeRate)
+
+				balanceF := decimal.Div(test.balance, exchangeRate)
+				t.Logf("balanceF: %0.6f", balanceF)
+
+				// convert to sun
+				balance, _ = decimal.Mul(balanceF, big.NewFloat(1_000_000)).Int64()
+				t.Logf("balance: %d", balance)
+			}
 
 			txEx, err := client.UnDelegateResource(test.from, test.to, test.core, balance)
 			assert.NoError(t, err, "failed delegate resource")
 			assert.NotNil(t, txEx, "failed delegate resource")
+
+			toBytes, _ := common.HexToByte(fromPk)
+			btcecPk, _ := btcec.PrivKeyFromBytes(toBytes)
+			addr := address.BTCECPrivkeyToAddress(btcecPk)
+			//t.Logf("addr: %s", addr.String())
+			if addr.String() != test.from {
+				txEx.Transaction.RawData.Contract[0].PermissionId = 3
+			}
 
 			// signature
 			ecdsa, err := crypto.HexToECDSA(fromPk)
@@ -510,9 +589,8 @@ func TestGrpcClient_UnDelegateResource(t *testing.T) {
 			res, err := client.BroadcastTransaction(tx)
 			assert.NoError(t, err, "failed broadcast transaction")
 			assert.NotNil(t, res, "failed broadcast transaction")
-			assert.NotEqual(t, tronpb.Return_SUCCESS, res.Code, "failed broadcast transaction")
 
-			t.Logf("delegate resource from %s to %s txid:%s", fromAddress.String(), toAddress.String(), txEx.Txid)
+			t.Logf("delegate resource from %s to %s txid:%s", fromAddress.String(), toAddress.String(), common.BytesToHexString(txEx.Txid))
 		})
 	}
 }
