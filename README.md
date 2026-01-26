@@ -98,4 +98,4 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 |   UpdateAccount   |   UpdateAccount2   |      CreateTransaction     | CreateTransaction2         |   ListWitnesses   |
 |   VoteWitnessAccount   |   VoteWitnessAccount2   |     GetDelegatedResourceAccountIndex      |     GetDelegatedResourceAccountIndexV2     |   GetDelegatedResource   |
 |   GetDelegatedResourceV2   |   GetDelegatedResourceByGivenTo   |      GetDelegatedResourceV2ByGivenTo     | GetCanDelegatedMaxSize         |   DelegateResource   |
-|   UnDelegateResource   |   GetAccountResource   |           |          |      |
+|   UnDelegateResource   |   GetAccountResource   |     GetBandwidthPrices      |      GetEnergyPrices    |   GetMemoPrice   |

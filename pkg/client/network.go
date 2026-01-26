@@ -23,3 +23,35 @@ func (c *GrpcClient) BroadcastTransaction(tx *tronpb.Transaction) (*tronpb.Retur
 	}
 	return res, nil
 }
+
+// GetBandwidthPrices return bandwidth price
+// https://developers.tron.network/reference/getbandwidthprices
+func (c *GrpcClient) GetBandwidthPrices() (*tronpb.PricesResponseMessage, error) {
+	var req = new(tronpb.EmptyMessage)
+
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.GetBandwidthPrices(ctx, req)
+}
+
+// GetEnergyPrices return energy price
+// https://developers.tron.network/reference/getenergyprices
+func (c *GrpcClient) GetEnergyPrices() (*tronpb.PricesResponseMessage, error) {
+	var req = new(tronpb.EmptyMessage)
+
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.GetEnergyPrices(ctx, req)
+}
+
+// GetMemoPrice return memo price
+func (c *GrpcClient) GetMemoPrice() (*tronpb.PricesResponseMessage, error) {
+	var req = new(tronpb.EmptyMessage)
+
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.GetMemoFee(ctx, req)
+}
