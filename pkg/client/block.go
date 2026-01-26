@@ -156,3 +156,19 @@ func (c *GrpcClient) GetBlockByLatestNum2(num int64) (*tronpb.BlockListExtention
 	}
 	return blockList, nil
 }
+
+// GetBlock Query block header information or entire block information according to block height or block hash
+// idOrNum: Block height or hash. If omitted, the latest block is queried. Example: 1000000.
+// detail: Whether to query the full block information. Set to true to query the entire block details;
+// set to false to query only the block header. (Default: false)
+// https://developers.tron.network/reference/getblock-1
+func (c *GrpcClient) GetBlock(idOrNum string, detail bool) (*tronpb.BlockExtention, error) {
+	var req = new(tronpb.BlockReq)
+	req.IdOrNum = idOrNum
+	req.Detail = detail
+
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.GetBlock(ctx, req)
+}

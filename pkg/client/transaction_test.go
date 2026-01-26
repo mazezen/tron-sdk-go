@@ -81,3 +81,28 @@ func TestGrpcClient_CreateTransaction2(t *testing.T) {
 		})
 	}
 }
+
+func TestGrpcClient_GetTransactionInfoByBlockNum(t *testing.T) {
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "client start should not error")
+	defer client.Stop()
+
+	nowBlock2, err := client.GetNowBlock2()
+	assert.NoError(t, err, "client GetNowBlock2 should not error")
+	assert.NotNil(t, nowBlock2, "client GetNowBlock2 should not be nil")
+	t.Logf("now block height: %d", nowBlock2.GetBlockHeader().GetRawData().GetNumber())
+
+	transactionInfoList, err := client.GetTransactionInfoByBlockNum(nowBlock2.GetBlockHeader().GetRawData().GetNumber())
+	assert.NoError(t, err, "client GetTransactionInfoByBlockNum should not error")
+	assert.NotNil(t, transactionInfoList, "client GetTransactionInfoByBlockNum should not be nil")
+
+	for _, txInfo := range transactionInfoList.GetTransactionInfo() {
+		t.Logf("txInfo: %v", txInfo.BlockNumber)
+		t.Logf("tx log:%v", txInfo.GetLog())
+		t.Logf(" ------------------------------------------------------------------- ")
+	}
+}

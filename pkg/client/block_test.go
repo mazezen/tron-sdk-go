@@ -3,6 +3,7 @@ package client
 import (
 	"testing"
 
+	"github.com/mazezen/tron-sdk-go/pkg/common"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -20,6 +21,7 @@ func TestGrpcClient_GetNowBlock(t *testing.T) {
 	block, err := client.GetNowBlock()
 	assert.Equal(t, err, nil)
 	assert.NotEqual(t, block, nil)
+	t.Logf("now block height: %v", block.GetBlockHeader().GetRawData().GetNumber())
 	t.Logf("block: %v\n", block)
 }
 
@@ -170,4 +172,39 @@ func TestGrpcClient_GetBlockByLatestNum2(t *testing.T) {
 	assert.NotEqual(t, blockList, nil)
 
 	t.Logf("blockList: %v\n", blockList)
+}
+
+func TestGrpcClient_GetBlock(t *testing.T) {
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err)
+	defer client.Stop()
+
+	// 最新的区别头信息
+	block, err := client.GetBlock("", false)
+	assert.NoError(t, err)
+	assert.NotNil(t, block, "block should not be nil")
+	t.Logf("block: %v\n", common.BytesToHexString(block.GetBlockid()))
+
+	// 最新的区别 全部信息
+	block, err = client.GetBlock("", true)
+	assert.NoError(t, err)
+	assert.NotNil(t, block, "block should not be nil")
+	//t.Logf("block: %v\n", block)
+	t.Logf("block: %v\n", common.BytesToHexString(block.GetBlockid()))
+
+	// 指定区块HASH
+	block, err = client.GetBlock("0000000004be44ff4e23dc84666f66a5fd5f28f0ffa78422b7f9ca7145101582", false)
+	assert.NoError(t, err)
+	assert.NotNil(t, block, "block should not be nil")
+	t.Logf("block: %v\n", common.BytesToHexString(block.GetBlockid()))
+
+	// 指定区块高度
+	block, err = client.GetBlock("79578479", true)
+	assert.NoError(t, err)
+	assert.NotNil(t, block, "block should not be nil")
+	t.Logf("block: %v\n", common.BytesToHexString(block.GetBlockid()))
 }

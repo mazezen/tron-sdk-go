@@ -64,3 +64,15 @@ func (c *GrpcClient) CreateTransaction2(from, to string, amount int64) (*tronpb.
 	}
 	return tx, nil
 }
+
+// GetTransactionInfoByBlockNum return all transactions in the specified block height.
+// https://developers.tron.network/reference/gettransactioninfobyblocknum
+func (c *GrpcClient) GetTransactionInfoByBlockNum(num int64) (*tronpb.TransactionInfoList, error) {
+	var req = new(tronpb.NumberMessage)
+	req.Num = num
+
+	ctx, cancelFun := c.getContext()
+	defer cancelFun()
+
+	return c.WalletClient.GetTransactionInfoByBlockNum(ctx, req)
+}

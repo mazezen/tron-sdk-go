@@ -87,15 +87,3 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ## protobuf 依赖
 * https://github.com/tronprotocol/protocol
 * https://github.com/googleapis/googleapis
-
-
-## 方法
-|   GetNowBlock   |   GetNowBlock2   | GetBlockByNum       | GetBlockByNum2       |   GetTransactionCountByBlockNum   |
-| ---- | ---- |---------------------|----------------------| ---- |
-|   GetTransactionCountByBlockNum   |   GetBlockByLimitNext   | GetBlockByLimitNext2 | GetBlockByLatestNum  |   GetBlockByLatestNum2   |
-|   GetAccount   |   SetAccountId   | GetAccountById      | BroadcastTransaction |   SignTransaction   |
-|   SignTransactionECDSA   |   Generate12   |      Generate24     | CreateWallet         |   GetAccountBalance   |
-|   UpdateAccount   |   UpdateAccount2   |      CreateTransaction     | CreateTransaction2         |   ListWitnesses   |
-|   VoteWitnessAccount   |   VoteWitnessAccount2   |     GetDelegatedResourceAccountIndex      |     GetDelegatedResourceAccountIndexV2     |   GetDelegatedResource   |
-|   GetDelegatedResourceV2   |   GetDelegatedResourceByGivenTo   |      GetDelegatedResourceV2ByGivenTo     | GetCanDelegatedMaxSize         |   DelegateResource   |
-|   UnDelegateResource   |   GetAccountResource   |     GetBandwidthPrices      |      GetEnergyPrices    |   GetMemoPrice   |
