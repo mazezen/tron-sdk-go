@@ -2,6 +2,9 @@ package common
 
 import (
 	"encoding/hex"
+	"fmt"
+	"math/big"
+	"strconv"
 	"strings"
 )
 
@@ -69,4 +72,27 @@ func BytesToEthHexString(bytes []byte) string {
 	encode := make([]byte, len(bytes)*2)
 	hex.Encode(encode, bytes)
 	return "0x" + string(encode[2:])
+}
+
+func HexToUint64(hex string) uint64 {
+	hex = strings.Replace(hex, "0x", "", -1)
+	n := new(big.Int)
+	n, _ = n.SetString(hex, 16)
+	return n.Uint64()
+}
+
+func Int64ToHex(b int64) string {
+	formatInt := strconv.FormatInt(b, 16)
+	return "0x" + formatInt
+}
+
+func HexToBigInt(hex string) (*big.Int, error) {
+	if string(hex) == "" {
+		hex = "0x0"
+	}
+	value, ok := new(big.Int).SetString(hex, 0)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse quantity %s", hex)
+	}
+	return value, nil
 }
