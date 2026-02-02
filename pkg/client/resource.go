@@ -3,8 +3,8 @@ package client
 import (
 	"fmt"
 
-	"github.com/golang/protobuf/proto"
 	tronpb "github.com/mazezen/tron-sdk-go/pb/tron"
+	"google.golang.org/protobuf/proto"
 )
 
 // GetAccountResource Query the resource information of an account (bandwidth, energy, etc).

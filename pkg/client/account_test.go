@@ -2,10 +2,12 @@ package client
 
 import (
 	"encoding/hex"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
+	tronpb "github.com/mazezen/tron-sdk-go/pb/tron"
 	"github.com/mazezen/tron-sdk-go/pkg/address"
 	"github.com/mazezen/tron-sdk-go/pkg/common"
 	"github.com/stretchr/testify/assert"
@@ -244,4 +246,158 @@ func TestGrpcClient_UpdateAccount2(t *testing.T) {
 			t.Logf("[]%s UpdateAccount2 tx is :%s", tt.name, common.BytesToHexString(transaction.GetTxid()))
 		})
 	}
+}
+
+func TestGrpcClient_CreateAccount(t *testing.T) {
+	var from = "T..."
+	var to = "T..."
+	var typ = 1
+
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "should not return error")
+	defer client.Stop()
+
+	tests := []struct {
+		name string
+		from string
+		to   string
+		typ  int
+	}{
+		{
+			name: "create account",
+			from: from,
+			to:   to,
+			typ:  typ,
+		},
+		{
+			name: "create account2",
+			from: from,
+			to:   to,
+			typ:  typ,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.name == "create account" {
+				tx, err := client.CreateAccount(tt.from, tt.to, tt.typ)
+				assert.NoError(t, err, "CreateAccount should not return error")
+				assert.NotNil(t, tx, "CreateAccount should not be nil")
+				t.Logf("[]%s CreateAccount result is: %v", tt.name, tx)
+			}
+			if tt.name == "create account2" {
+				tx, err := client.CreateAccount2(tt.from, tt.to, tt.typ)
+				assert.NoError(t, err, "CreateAccount should not return error")
+				assert.NotNil(t, tx, "CreateAccount should not be nil")
+				t.Logf("[]%s CreateAccount result is: %v", tt.name, tx)
+			}
+		})
+	}
+}
+
+func TestGrpcClient_GetAccountNet(t *testing.T) {
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "should not return error")
+	defer client.Stop()
+
+	net, err := client.GetAccountNet("")
+	assert.NoError(t, err, "should not return error")
+	assert.NotNil(t, net, "GetAccountNet should not be nil")
+
+	t.Logf("net is: %v", net)
+}
+
+func TestGrpcClient_AccountPermissionUpdate(t *testing.T) {
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.shasta.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "should not return error")
+	defer client.Stop()
+
+	// === 测试账户 ===
+	// 已激活账户，有 owner 权限
+	fromAddress := "TYourTestAddressHereLikeTS..."
+
+	// === Owner Permission（必须提供） ===
+	// 示例：保持原 owner，但 threshold=1，1/1 key（最简单）
+	owner := map[string]interface{}{
+		"threshold": int64(1),
+		"keys": map[string]int64{
+			fromAddress: 1, // 自己给自己权重1
+		},
+	}
+
+	// === Active Permission 示例 ===
+	// 示例：2个 active 权限组
+	// Active0: threshold=2，需要 2/3 签名才能转账等操作
+	actives := []map[string]interface{}{
+		{
+			"name":      "active0",
+			"threshold": int64(2),
+			"operations": map[string]bool{
+				"TransferContract":        true,
+				"TransferAssetContract":   true,
+				"TriggerSmartContract":    true,
+				"FreezeBalanceContract":   true,
+				"UnfreezeBalanceContract": true,
+				// 可添加更多：AccountUpdateContract, AccountPermissionUpdateContract 等
+				// 但 AccountPermissionUpdateContract 通常只留给 owner
+			},
+			"keys": map[string]int64{
+				"TSignerAddress1...": 1,
+				"TSignerAddress2...": 1,
+				"TSignerAddress3...": 1,
+			},
+		},
+		// 可选：第二个 active 组（例如只允许特定操作）
+		{
+			"name":      "active1",
+			"threshold": 1,
+			"operations": map[string]bool{
+				"UpdateAccountContract": true,
+			},
+			"keys": map[string]int64{
+				fromAddress: 1,
+			},
+		},
+	}
+	// === Witness Permission（可选，如果是 SR 账户才需要，通常 nil） ===
+	var witness map[string]interface{} = nil // 大多数账户不需要
+
+	// === 调用 ===
+	txExt, err := client.AccountPermissionUpdate(
+		fromAddress,
+		owner,
+		witness,
+		actives,
+	)
+	assert.NoError(t, err, "AccountPermissionUpdate 调用不应报错")
+	assert.NotNil(t, txExt, "TransactionExtention 不应为空")
+
+	if txExt.Result != nil {
+		assert.Equal(t, tronpb.Return_SUCCESS, txExt.Result.Code,
+			fmt.Sprintf("权限更新模拟失败: %s", string(txExt.Result.Message)))
+		t.Log("模拟更新成功（未签名），code=0")
+	} else {
+		t.Fatal("txExt.Result 为 nil，请检查 protobuf 定义")
+	}
+
+	// 输出调试信息
+	t.Logf("Transaction ID (txid): %x", txExt.GetTxid())
+	t.Logf("Energy used (估算): %d", txExt.EnergyUsed)
+	t.Logf("完整响应: %+v", txExt)
+
+	// 可选：打印 raw transaction hex（用于后续签名测试）
+	// rawDataHex := hex.EncodeToString(txExt.Transaction.GetRawData().GetRawData())
+	// t.Logf("Raw Data Hex: %s", rawDataHex)
 }

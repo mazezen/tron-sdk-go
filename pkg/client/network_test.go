@@ -2,6 +2,7 @@ package client
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -54,4 +55,19 @@ func TestGrpcClient_GetMemoPrice(t *testing.T) {
 	assert.NotNil(t, memoPrice, "no memo price")
 
 	t.Logf("memo price: %v", memoPrice.GetPrices())
+}
+
+func TestGrpcClient_GetNextMaintenanceTime(t *testing.T) {
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "failed to start grpc client")
+	defer client.Stop()
+
+	tm, err := client.GetNextMaintenanceTime()
+	assert.NoError(t, err, "failed to get next maintenance time")
+	t.Logf("maintenance time: %v", time.UnixMilli(tm.GetNum()).Format(time.DateTime))
+
 }

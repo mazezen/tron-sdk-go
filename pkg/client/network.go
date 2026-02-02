@@ -55,3 +55,21 @@ func (c *GrpcClient) GetMemoPrice() (*tronpb.PricesResponseMessage, error) {
 
 	return c.WalletClient.GetMemoFee(ctx, req)
 }
+
+// GetChainParameters retrieve all parameters that can be configured by the blockchain committee along with their values.
+// https://developers.tron.network/reference/wallet-getchainparameters
+func (c *GrpcClient) GetChainParameters() (*tronpb.ChainParameters, error) {
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.GetChainParameters(ctx, &tronpb.EmptyMessage{})
+}
+
+// GetNextMaintenanceTime returns the timestamp of the next voting time in milliseconds
+// https://developers.tron.network/reference/getnextmaintenancetime
+func (c *GrpcClient) GetNextMaintenanceTime() (*tronpb.NumberMessage, error) {
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.GetNextMaintenanceTime(ctx, &tronpb.EmptyMessage{})
+}

@@ -3,8 +3,9 @@ package client
 import (
 	"fmt"
 
-	"github.com/golang/protobuf/proto"
 	tronpb "github.com/mazezen/tron-sdk-go/pb/tron"
+	"github.com/mazezen/tron-sdk-go/pkg/common"
+	"google.golang.org/protobuf/proto"
 )
 
 // CreateTransaction
@@ -25,8 +26,8 @@ func (c *GrpcClient) CreateTransaction(from, to string, amount int64) (*tronpb.T
 	}
 	req.Amount = amount
 
-	ctx, cancelFun := c.getContext()
-	defer cancelFun()
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
 
 	return c.WalletClient.CreateTransaction(ctx, req)
 }
@@ -48,8 +49,8 @@ func (c *GrpcClient) CreateTransaction2(from, to string, amount int64) (*tronpb.
 	}
 	req.Amount = amount
 
-	ctx, cancelFun := c.getContext()
-	defer cancelFun()
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
 	tx, err := c.WalletClient.CreateTransaction2(ctx, req)
 	if err != nil {
 		return nil, err
@@ -71,8 +72,48 @@ func (c *GrpcClient) GetTransactionInfoByBlockNum(num int64) (*tronpb.Transactio
 	var req = new(tronpb.NumberMessage)
 	req.Num = num
 
-	ctx, cancelFun := c.getContext()
-	defer cancelFun()
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
 
 	return c.WalletClient.GetTransactionInfoByBlockNum(ctx, req)
+}
+
+// GetTransactionById query transaction information by transaction id.(Confirmed)
+// https://developers.tron.network/reference/gettransactionbyid
+func (c *GrpcClient) GetTransactionById(hash string) (*tronpb.Transaction, error) {
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	hex, err := common.FromHex(hash)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.WalletClient.GetTransactionById(ctx, &tronpb.BytesMessage{Value: hex})
+}
+
+// TotalTransaction total transaction count
+func (c *GrpcClient) TotalTransaction() (*tronpb.NumberMessage, error) {
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.TotalTransaction(ctx, &tronpb.EmptyMessage{})
+}
+
+// GetTransactionInfoById query information by transaction hash
+func (c *GrpcClient) GetTransactionInfoById(hash string) (*tronpb.TransactionInfo, error) {
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+	hex, err := common.FromHex(hash)
+	if err != nil {
+		return nil, err
+	}
+	return c.WalletClient.GetTransactionInfoById(ctx, &tronpb.BytesMessage{Value: hex})
+}
+
+func (c *GrpcClient) CreateCommonTransaction(tx *tronpb.Transaction) (*tronpb.TransactionExtention, error) {
+	ctx, cancelFunc := c.getContext()
+	defer cancelFunc()
+
+	return c.WalletClient.CreateCommonTransaction(ctx, tx)
 }

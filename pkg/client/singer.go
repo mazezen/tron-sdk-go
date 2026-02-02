@@ -6,8 +6,8 @@ import (
 
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/golang/protobuf/proto"
 	tronpb "github.com/mazezen/tron-sdk-go/pb/tron"
+	"google.golang.org/protobuf/proto"
 )
 
 func SignTransaction(tx *tronpb.Transaction, signer *btcec.PrivateKey) (*tronpb.Transaction, error) {

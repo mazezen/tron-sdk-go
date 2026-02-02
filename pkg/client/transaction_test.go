@@ -106,3 +106,47 @@ func TestGrpcClient_GetTransactionInfoByBlockNum(t *testing.T) {
 		t.Logf(" ------------------------------------------------------------------- ")
 	}
 }
+
+func TestGrpcClient_GetTransactionById(t *testing.T) {
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "client start should not error")
+	defer client.Stop()
+
+	tx, err := client.GetTransactionById("8b0eac84bfb1ecc72e5dffd4a7989458e9ac4dd1c0506c1edf0557c4adaaf76e")
+	assert.NoError(t, err, "client GetTransactionById should not error")
+	assert.NotNil(t, tx, "client GetTransactionById should not be nil")
+	t.Logf("tx: %v", tx)
+}
+
+func TestGrpcClient_TotalTransaction(t *testing.T) {
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "client start should not error")
+	defer client.Stop()
+
+	total, err := client.TotalTransaction()
+	assert.Equal(t, 0, "client TotalTransaction should not be 0")
+	t.Logf("total: %d", total.GetNum())
+}
+
+func TestGrpcClient_GetTransactionInfoById(t *testing.T) {
+	dialOptions := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	client := NewGrpcClient("grpc.trongrid.io:50051")
+	err := client.Start(dialOptions...)
+	assert.NoError(t, err, "client start should not error")
+	defer client.Stop()
+
+	res, err := client.GetTransactionInfoById("3724696911919af208d7b5dda1183301f73648f3b7268b6016d3b883fd67d59a")
+	assert.NoError(t, err, "client GetTransactionInfoById should not error")
+	assert.NotNil(t, res, "client GetTransactionInfoById should not be nil")
+	t.Logf("res: %v", res)
+}
