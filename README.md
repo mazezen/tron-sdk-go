@@ -2,7 +2,7 @@
 [![Go](https://img.shields.io/badge/Go-1.24.1-00ADD8.svg?logo=go&logoColor=white)](https://go.dev/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mazezen/tron-sdk-go)](https://goreportcard.com/report/github.com/mazezen/tron-sdk-go)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-> tron-sdk-go 是一个的Go SDK用于与TRON区块链进行交互.
+> tron-sdk-go 是一个的Go SDK用于与TRON区块链进行交互.支持GRPC, Json-Rpc, Http
 
 ## 使用
 ```shell
